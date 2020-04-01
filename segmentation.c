@@ -18,11 +18,11 @@ Privilege Level: 2 bits
 Total : 50 bits */
 #include "segmentation.h"
 void init_GDT(){
-	GDT = (segment)(malloc(sizeof(segment))*MAX_ENTRIES);
+	GDT = (segment *)(malloc(sizeof(segment)*MAX_ENTRIES));
 	return GDT;
 }
 segment* init_LDT(){
-	segment* LDT = (segment)(malloc(sizeof(segment))*MAX_ENTRIES);
+	segment* LDT = (segment *)(malloc(sizeof(segment)*MAX_ENTRIES));
 	//segment *seg = (segment *)(malloc(sizeof(segment)));
 	for(int i = 0;i<MAX_ENTRIES;i++){
 		if(GDT[i].status & 0x10 != 1){
@@ -55,7 +55,7 @@ void make_entry_GDT(segment *GDT, uint32_t base, uint16_t limit){
 segment search_LDT(uint16_t selector){
 	int8_t index = selector & 0x03f8;//0000011111111000
 	uint8_t protec = selector & 0x0003;//0000000000000011
-	int8_t ldtr_index = LDTR & 0x03f8;//getting the entry index from LDTR
+	int8_t ldtr_index = *LDTR & 0x03f8;//getting the entry index from LDTR
 	segment* LDT = (segment *)(GDT[ldtr_index].base);//base address of the LDT
 	uint16_t limit = GDT[ldtr_index].limit;//length of the LDT
 	if(index>limit)
@@ -67,7 +67,7 @@ segment search_LDT(uint16_t selector){
 	else
 		error("Please ensure that you have the proper access permissions");
 }
-segment search_GDT(uint16_t selector, segment *GDT){
+segment search_GDT(uint16_t selector){
 	int8_t index = selector & 0x03f8;//0000001111111000
 	uint8_t protec = selector & 0x0003;
 	if(GDT[index].status & 0x0003 >= protec){
@@ -82,14 +82,14 @@ int conv_to_linear(int log_addr){
 	if(selector & 0x0002 == 1){
 		segment seg = search_LDT(selector);//get the descriptor entry in descriptor tables
 		uint32_t addr = seg.base + log_addr || 0x003fffff;
-		if(segment.base + segment.limit < addr)
+		if(seg.base + seg.limit < addr)
 			error("Address out of bound");
 		return addr;
 	}
 	else{
-		segment seg = search_GDT(selector,GDT);
+		segment seg = search_GDT(selector);
 		uint32_t addr = seg.base + log_addr || 0x003fffff;
-		if(segment.base + segment.limit < addr)
+		if(seg.base + seg.limit < addr)
 			error("Address out of bound");
 		return addr;
 	}
