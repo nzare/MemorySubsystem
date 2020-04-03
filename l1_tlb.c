@@ -1,3 +1,5 @@
+#include "tlb.h"
+
 tlb_entry *l1_tlb;
 uint8_t l1_curr_position = 0;
 
@@ -5,7 +7,7 @@ uint8_t l1_curr_position = 0;
 // Invalidate tlb
 void l1_tlb_flush(){
   for(int i=0;i< NUM_L1_TLB_ENTERIES; i++){
-  l1_tlb[i].pgno[2] = (l1_tlb[i].pgno[2])|00001000;
+    l1_tlb[i].pgno[2] = (l1_tlb[i].pgno[2])|00000010;
   }
  
 }
@@ -21,7 +23,7 @@ void l1_tlb_initialize(){
 void l1_tlb_update(uint16_t f_no, uint8_t pgno[3]){
   //replacing the first invalid entry
   for(int i=0;i<NUM_L1_TLB_ENTERIES;i++){
-    if((l1_tlb[i].pgno[2]&00001000)!=0){
+    if((l1_tlb[i].pgno[2]&00000010)!=0){
 
       for(int j=0;j<3;j++){
        
@@ -29,7 +31,7 @@ void l1_tlb_update(uint16_t f_no, uint8_t pgno[3]){
 
       }
       l1_tlb[i].frno = f_no;
-      l1_tlb[i].pgno[2] = l1_tlb[i].pgno[2]&11110111;
+      l1_tlb[i].pgno[2] = l1_tlb[i].pgno[2]&11111101;
       return;
     }
   }
@@ -45,7 +47,7 @@ void l1_tlb_update(uint16_t f_no, uint8_t pgno[3]){
   }
   l1_tlb[to_replace].frno = f_no;
   // Make sure it is valid
-  l1_tlb[to_replace].pgno[2] = l1_tlb[to_replace].pgno[2]&11110111;
+  l1_tlb[to_replace].pgno[2] = l1_tlb[to_replace].pgno[2]&11111101;
   // change the position of the entry number to be replaced for the next time such situation occurs
   l1_curr_position = (l1_curr_position+1) % NUM_L1_TLB_ENTERIES;
   return;
@@ -55,11 +57,11 @@ uint16_t l1_tlb_search(uint8_t pgno[3]){
  
   for(int i=0;i< NUM_L1_TLB_ENTERIES ;i++){
 
-  if((l1_tlb[i].pgno[2]&00001000)!=0) continue;
+  if((l1_tlb[i].pgno[2]&00000010)!=0) continue;
 
     if(l1_tlb[i].pgno[0]==pgno[0]
       && l1_tlb[i].pgno[1]==pgno[1]
-      && (l1_tlb[i].pgno[2]&11110000)==(pgno[2]&11110000)){
+      && (l1_tlb[i].pgno[2]&11111100)==(pgno[2]&11111100)){
     
         l1_curr_position = i ;
         return l1_tlb[i].frno;
@@ -74,12 +76,12 @@ int l1_found(uint16_t f_no, uint8_t pgno[3]){
 
   for(int i=0;i< NUM_L1_TLB_ENTERIES ;i++){
 
-  if((l1_tlb[i].pgno[2]&00001000)!=0)
+  if((l1_tlb[i].pgno[2]&00000010)!=0)
     continue;
 
     if(l1_tlb[i].frno==f_no && l1_tlb[i].pgno[0]==pgno[0]
       && l1_tlb[i].pgno[1]==pgno[1]
-      && (l1_tlb[i].pgno[2]&11110000)==(pgno[2]&11110000))
+      && (l1_tlb[i].pgno[2]&11111100)==(pgno[2]&11111100))
         return 1;
   }
   return 0;
@@ -90,11 +92,11 @@ int l1_found(uint16_t f_no, uint8_t pgno[3]){
 void l1_tlb_valid_update(uint16_t old_frno,uint8_t old_pgno[3],uint16_t f_no,uint8_t pgno[3]){
 
   for(int i=0;i< NUM_L1_TLB_ENTERIES ;i++){
-  if((l1_tlb[i].pgno[2]&00001000)!=0)
+  if((l1_tlb[i].pgno[2]&00000010)!=0)
     continue;
   if(l1_tlb[i].frno==old_frno && l1_tlb[i].pgno[0]==old_pgno[0]
       && l1_tlb[i].pgno[1]==old_pgno[1]
-      && (l1_tlb[i].pgno[2]&11110000)==(old_pgno[2]&11110000)){
+      && (l1_tlb[i].pgno[2]&11111100)==(old_pgno[2]&11111100)){
     
         l1_curr_position = i ;
         l1_tlb[i].frno = f_no;
@@ -104,11 +106,10 @@ void l1_tlb_valid_update(uint16_t old_frno,uint8_t old_pgno[3],uint16_t f_no,uin
           l1_tlb[i].pgno[j]=pgno[j];
        
         }
-        l1_tlb[i].pgno[2]=pgno[2]&11110111;
+        l1_tlb[i].pgno[2]=pgno[2]&11111101;
         return;
   }
   }
 return;
 }
-
 
