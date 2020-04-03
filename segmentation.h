@@ -1,31 +1,27 @@
-/*The logical address will have a segment selector part (10 most
-significant bits). These '10 bits' will tell us which segment table
-to go to (LDT or GDT) and will also tell us which entry to look for
-in the descriptor table. The descriptor table will contain the entries
-regarding various segments. Each entry will have the base address of
-the segment, the limit (of the length of the segment) and other status
-bits
+/*The implemetatoin of Segmentation
 So, to summarize:
 32 bits: Logical adrr{
-    22 bits : offset
-    10 bits : selector {
-        7 bits : seg number	
-        1 bit : GDT(0)/LDT(1)
-        2 bits: Protection Level
+	25 bits : offset
+	7 bits : selector {
+		1 bit : GDT/LDT
+		4 bits : seg number
+		2 bits: Protection Level
 	}
 }
+10 bits will give tell us to look into which desc table.
+Then we will get the the seg number and that will give us the base and limit and other status values
 Base : 32 bits
-Limit : 14 bits
+Limit : 16 bits
 Granularity: 1
 Sys/application : 1
 Privilege Level: 2 bits 
-Total : 50 bits */
+Total : 52 bits */
 #pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#define MAX_ENTRIES 126
+#define MAX_ENTRIES 15
 typedef struct segment_entry
 {
 	//we will the data type later, first let us confirm
@@ -39,7 +35,7 @@ typedef struct segment_entry
 	its execution and exited.*/
 } segment;
 extern segment *GDT;
-extern uint16_t *LDTR;
+extern uint8_t *LDTR;
 //This function is used to generate the linear address
 int conv_to_linear(int log_addr);
 
