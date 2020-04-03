@@ -23,7 +23,7 @@ void init_GDT(){
 segment* init_LDT(){
 	segment* LDT = (segment *)(malloc(sizeof(segment)*MAX_ENTRIES));
 	//segment *seg = (segment *)(malloc(sizeof(segment)));
-	for(int i = 0;i<MAX_ENTRIES;i++){
+	for(int i = 0;i<MAX_GDT_ENTRIES;i++){
 		if(GDT[i].status & 0x10 != 1){//00010000
 			GDT[i].base = LDT;
 			GDT[i].limit = 0;
@@ -32,27 +32,34 @@ segment* init_LDT(){
 	}
 	return LDT;
 }
-void make_entry_LDT(segment *LDT, uint32_t base, uint16_t limit)
+void make_entry_LDT(segment *LDT, uint8_t selector,uint32_t base, uint16_t limit)
 {
-	for(int i = 0;i<MAX_ENTRIES;i++){
-		if(LDT[i].status & 0x10 != 1){
-			LDT[i].base = base;
-			LDT[i].limit = limit;
-			LDT[i].status = 0x10; //default status bits
-		}
+	uint8_t index = selector & 0x78;
+	if(index > MAX_LDT_ENTRIES)
+		error("Cannot make more LDT entries");
+	if(LDT[i].status & 0x10 != 1){
+		LDT[i].base = base;
+		LDT[i].limit = limit;
+		LDT[i].status = 0x10; //default status bits
 	}
+	else
+		error("Invalid attempt to make entry");
 }
-void make_entry_GDT(segment *GDT, uint32_t base, uint16_t limit){
-	for(int i = 0;i<MAX_ENTRIES;i++){
-		if(GDT[i].status & 0x10 != 1){
-			GDT[i].base = base;
-			GDT[i].limit = limit;
-			GDT[i].status = 0x10; //default status bits
-		}
-	}	
+void make_entry_GDT(segment *GDT, uint8_t selector,uint32_t base, uint16_t limit){
+
+	uint8_t index = selector & 0x78;
+	if(index > MAX_GDT_ENTRIES)
+		error("Cannot make more GDT entries");
+	if(GDT[index].status & 0x10 != 1){
+		GDT[index].base = base;
+		GDT[index].limit = limit;
+		GDT[index].status = 0x10; //default status bits
+	}
+	else
+		error("Invalid attempt to make entry");
 }
-segment search_LDT(uint16_t selector){
-	int8_t index = selector & 0x0078;//0000000001111000
+segment search_LDT(uint8_t selector){
+	int8_t index = selector & 0x78;//01111000
 	uint8_t protec = selector & 0x0003;//0000000000000011
 	int8_t ldtr_index = *LDTR & 0x78;//getting the entry index from LDTR, 4 MSBs, so 01111000, MSB is 0 due to padding
 	uint16_t limit = GDT[ldtr_index].limit;//length of the LDT
@@ -68,8 +75,8 @@ segment search_LDT(uint16_t selector){
 	else
 		error("Please ensure that you have the proper access permissions");
 }
-segment search_GDT(uint16_t selector){
-	int8_t index = selector & 0x0078;//0000000001111000
+segment search_GDT(uint8_t selector){
+	int8_t index = selector & 0x78;//01111000
 	uint8_t protec = selector & 0x0003;
 	if(GDT[index].status & 0x0003 >= protec){
 		return GDT[index];
@@ -88,7 +95,7 @@ int conv_to_linear(int log_addr){
 		return addr;
 	}
 	else{
-		segment seg = search_GDT(selecto)r;
+		segment seg = search_GDT(selector);
 		uint32_t addr = seg.base + log_addr | 0x01ffffff;//segment base + logical addr offset
 		if(seg.base + seg.limit < addr)
 			error("Address out of bound");

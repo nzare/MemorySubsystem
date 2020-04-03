@@ -21,7 +21,8 @@ Total : 52 bits */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#define MAX_ENTRIES 15
+#define MAX_LDT_ENTRIES 15
+#define MAX_GDT_ENTRIES 128
 typedef struct segment_entry
 {
 	//we will the data type later, first let us confirm
@@ -45,8 +46,8 @@ void make_entry_GDT(segment *GDT, uint32_t base, uint16_t limit);
 
 //This function is used to search for the required entry
 void init_desc_tables();
-segment search_GDT(uint16_t selector);
-segment search_LDT(uint16_t selector);
+segment search_GDT(uint8_t selector);
+segment search_LDT(uint8_t selector);
 
 void init_GDT();	
 segment* init_LDT();
