@@ -8,7 +8,7 @@ In this project we have implemented Multilevel Cache with Multilevel TLB and Seg
 4) Nidhi Zare : 2017A7PS0139G
 
 ## List of files:
-1) L1_cache.h : It declares the the struct for L1 cache entry.
+1) L1_cache.h : It declares the the struct for L1 cache module.
 
 2) tlb.h : This file contains the declararion of the functions that will be used in TLB management (both L1 and L2 TLB).
 
