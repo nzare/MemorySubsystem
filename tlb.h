@@ -21,15 +21,17 @@ typedef struct tlb_entry{
 	uint8_t pgno[3];  //22 bits pgno, 1 bit valid/invalid, 1 bit unused
 } tlb_entry;
 
-// extern tlb_entry *l2_tlb;
-// extern tlb_entry *l1_tlb;
+extern tlb_entry *l2_tlb;
+extern tlb_entry *l1_tlb;
 
-// extern uint8_t l1_curr_position;
-// extern uint8_t l2_curr_position;
+extern uint8_t l1_curr_position;
+extern uint8_t l2_curr_position;
 
 //Function to initialise tlb
 
-extern void tlb_initialize();
+extern void l1_tlb_initialize();
+extern void l2_tlb_initialize();
+
 
 // Function to invalidate tlb
 extern void tlb_flush();
@@ -41,7 +43,7 @@ extern int l1_found(uint16_t f_no, uint8_t pgno[3]);
 extern void l1_tlb_update(uint16_t f_no, uint8_t pgno[3]);
 extern void l1_tlb_valid_update(uint16_t old_frno,uint8_t old_pgno[3],uint16_t f_no,uint8_t pgno[3]);
 extern void l2_tlb_valid_update(uint16_t old_frno,uint8_t* old_pgno,uint16_t f_no,uint8_t* pgno);
-extern void l2_tlb_invalid_update(uint16_t f_no,uint8_t pgno[3]);
+extern void l2_tlb_update(uint16_t f_no, uint8_t pgno[3]);
 
 // Function to search in tlb
 extern uint16_t l1_tlb_search(uint8_t pgno[3]);

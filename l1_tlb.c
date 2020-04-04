@@ -1,7 +1,5 @@
 #include "tlb.h"
 
-tlb_entry *l1_tlb;
-uint8_t l1_curr_position = 0;
 
 // All entries in tlb are invalid in the beginning
 // Invalidate tlb
@@ -14,7 +12,7 @@ void l1_tlb_flush(){
 
 //Initialize the L1 TLB with all entries as invalid
 void l1_tlb_initialize(){
- 
+  l1_curr_position=0;
   l1_tlb = (tlb_entry *) malloc(sizeof(tlb_entry) * NUM_L1_TLB_ENTERIES);
   l1_tlb_flush();
 }
