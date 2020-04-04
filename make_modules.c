@@ -60,32 +60,15 @@ int main(){
 	segment* LDT_3 = init_LDT();
 	segment* LDT_4 = init_LDT();
 	segment* LDT_5 = init_LDT();
-	make_entry_GDT(GDT, LDT_1, 30, 1);
-	make_entry_GDT(GDT, LDT_2, 30, 2);
-	make_entry_GDT(GDT, LDT_3, 30, 3);
-	make_entry_GDT(GDT, LDT_4, 30, 4);
-	make_entry_GDT(GDT, LDT_5, 30, 5); //30 is in bytes
+	make_entry_GDT(GDT, LDTR_1, LDT_1, 1024);
+	make_entry_GDT(GDT, LDTR_2, LDT_2, 1024);
+	make_entry_GDT(GDT, LDTR_3, LDT_3, 1024);
+	make_entry_GDT(GDT, LDTR_4, LDT_4, 1024);
+	make_entry_GDT(GDT, LDTR_5, LDT_5, 1024);
 	make_entry_GDT(GDT, CS_START , 0x00040000, CS); //code segment. //update code from himanshu.
-	make_entry_LDT(LDT_1, DS_START_1, 0x00040000, DS); //for DS of process 1.
-	make_entry_LDT(LDT_2, DS_START_2, 0x00040000, DS); //limit from 0x00040000 has to be changed to 257kb.
-	make_entry_LDT(LDT_3, DS_START_3, 0x00040000, DS);
-	make_entry_LDT(LDT_4, DS_START_4, 0x00040000, DS);
-	make_entry_LDT(LDT_5, DS_START_5, 0x00040000, DS);
-	// Take input as virtual address from file and I'm assuming I have it here.
-	// I have information of process number also.
-
-	// The code below this line should ideally end up in our real main.c.
-	uint32_t virtual_address; //hex format
-	uint32_t process_num;
-
-	uint32_t* address;
-
-	address = get_linear_address(virtual_address, process_num);
-
-	uint8_t page_num = (address[0] >> 10) & 0xFF;
-
-	uint32_t page_offset = address[0] & 0x3FF;
-
-	try_accessing_data(address[1], page_num, page_offset);
-
+	make_entry_LDT(LDT_1, DS, DS_START_1, 0x00040400); //for DS of process 1.
+	make_entry_LDT(LDT_2, DS, DS_START_2, 0x00040400); //limit from 0x00040000 has to be changed to 257kb.
+	make_entry_LDT(LDT_3, DS, DS_START_3, 0x00040400);
+	make_entry_LDT(LDT_4, DS, DS_START_4, 0x00040400);
+	make_entry_LDT(LDT_5, DS, DS_START_5, 0x00040400);
 }

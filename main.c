@@ -9,13 +9,15 @@
 #include "segmentation.h"
 #include "main_memory.h"
 #include "make_modules.h"
-#include "L1_cache.c"
+#include "L1_cache.h"
 #include "segmentation.h"
 #include "tlb.h"
 
 typedef struct va_process{
+
   uint32_t va;
-  uint8_t process_no;
+  uint32_t process_no;
+
 }va_process;
 
 void get_input_va(char* filesList[],int n){
@@ -36,7 +38,7 @@ void get_input_va(char* filesList[],int n){
 
     while(1){
 
-      struct va_process call_function; //maybe this was causing the problem
+      struct va_process current_params; //maybe this was causing the problem
 
       for(int i=0;i<200;i++){
 
@@ -59,29 +61,39 @@ void get_input_va(char* filesList[],int n){
         
         printf("%s : %d\n",line,curr_file);
 
-        unsigned int h;
+        unsigned int curr_address;
         sscanf(line, "%x", &h);
 
         //can be used to call other functions
         //We have 32 bit unsigned integer for address and 8 bit int for processno
 
-        call_function.va=h;
-        call_function.process_no=curr_file;
+        call_params.va = curr_address; //This is virtual address
+        call_params.process_no = curr_file; // This is process numeber.
 
         //Cache Lite, TLB lite abhi.
 
+        uint32_t* address;
 
+        address = get_linear_address(call_function.va, call_function.processno);
+
+        uint8_t page_num = (address[0] >> 10) & 0xFF;
+
+        uint32_t page_offset = address[0] & 0x3FF;
+
+        try_accessing_data(address[1], page_num, page_offset); //Directly go to main memmory.
       }
       
       curr_file=(curr_file+1)%n;
       if(num_completed==n){
-        for (int i = 0; i < n; ++i)
-        {
+        for (int i = 0; i < n; ++i){
             fclose(fp[i]);
         }
+
         return;
       }
+
     }
+
 }
 
 
@@ -115,6 +127,7 @@ int main(int argc, char *argv[])
     rewinddir(dir);
 
   char *filesList[num_input];
+
   int i=0;
 
   //Put file names into the array

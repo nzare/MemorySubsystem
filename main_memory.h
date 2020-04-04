@@ -30,3 +30,11 @@ void update_occupancy(int start, int finish);
 
 
 uint32_t find_first_fit();
+
+uint8_t hex2int(char ch);
+
+void initialize_page_table_for_segment(uint32_t start_address);
+
+void update_page_table_for_segment(uint32_t segment_base, uint8_t page_num, char* hex_address);
+
+char* address_to_hex_string(uint32_t address);

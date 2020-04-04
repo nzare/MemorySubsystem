@@ -13,3 +13,5 @@ segment get_segment_entry(uint32_t selector, uint32_t process_num, int descripto
 
 uint32_t* get_linear_address(uint32_t virtual_address, uint32_t process_num);
 
+void try_accessing_data(uint32_t segment_base, uint8_t page_num, uint16_t offset);
+

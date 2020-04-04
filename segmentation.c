@@ -37,7 +37,7 @@ segment* init_LDT(){
 //Make an entry in LDT with the help of selector
 void make_entry_LDT(segment *LDT, uint8_t selector,uint32_t base, uint16_t limit)
 {
-	uint8_t index = selector & 0x78;
+	uint8_t index = selector;
 	if(index > MAX_LDT_ENTRIES)
 		error("Cannot make more LDT entries");
 	if(LDT[i].status & 0x10 != 1){
@@ -51,7 +51,7 @@ void make_entry_LDT(segment *LDT, uint8_t selector,uint32_t base, uint16_t limit
 //Make an entry in GDT with the help of selector
 void make_entry_GDT(segment *GDT, uint8_t selector, uint32_t base, uint16_t limit){
 
-	uint8_t index = selector & 0x78;
+	uint8_t index = selector;
 	if(index > MAX_GDT_ENTRIES)
 		error("Cannot make more GDT entries");
 	if(GDT[index].status & 0x10 != 1){
