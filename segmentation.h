@@ -36,8 +36,6 @@ typedef struct segment_entry
 //Global Descriptor Table
 extern segment *GDT;//Local Descriptor Table Register
 extern uint8_t *LDTR; //No need for this, process value is LDTR ki value.
-//This function is used to generate the linear address
-int conv_to_linear(int log_addr);
 
 //These 2 functions are used to make a new entry in the Local and Global segment table respectively
 void make_entry_LDT(segment *LDT,uint8_t selector ,uint32_t base, uint16_t limit);

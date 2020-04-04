@@ -49,7 +49,7 @@ void make_entry_LDT(segment *LDT, uint8_t selector,uint32_t base, uint16_t limit
 		error("Invalid attempt to make entry");
 }
 //Make an entry in GDT with the help of selector
-void make_entry_GDT(segment *GDT, uint8_t selector,uint32_t base, uint16_t limit){
+void make_entry_GDT(segment *GDT, uint8_t selector, uint32_t base, uint16_t limit){
 
 	uint8_t index = selector & 0x78;
 	if(index > MAX_GDT_ENTRIES)
@@ -63,10 +63,10 @@ void make_entry_GDT(segment *GDT, uint8_t selector,uint32_t base, uint16_t limit
 		error("Invalid attempt to make entry");
 }
 //search for a particular entry in LDT. Go to GDT with the help of LDTR to find the start of LDT
-segment search_LDT(uint8_t selector){
+segment search_LDT(uint8_t selector, uint8_t process_num){
 	int8_t index = selector & 0x78;//01111000
 	uint8_t protec = selector & 0x0003;//0000000000000011
-	int8_t ldtr_index = *LDTR & 0x78;//getting the entry index from LDTR, 4 MSBs, so 01111000, MSB is 0 due to padding
+	int8_t ldtr_index = process_num + 1;//getting the entry index from LDTR, 4 MSBs, so 01111000, MSB is 0 due to padding
 	uint16_t limit = GDT[ldtr_index].limit;//length of the LDT
 	if(index>limit)
 		error("Address out of bound");
@@ -89,22 +89,4 @@ segment search_GDT(uint8_t selector){
 	}
 	else
 		error("Please ensure that you have the proper access permissions");
-}
-//Convert the logical address to linear address
-int conv_to_linear(int log_addr){
-	uint16_t selector = log_addr >> 25;
-	if(selector & 0x0004 == 1){//3rd LSB, i.e.: 0000100
-		segment seg = search_LDT(selector);//get the descriptor entry in descriptor tables
-		uint32_t addr = seg.base + log_addr | 0x01ffffff;//segment base + logical addr offset
-		if(seg.base + seg.limit < addr)
-			error("Address out of bound");
-		return addr;
-	}
-	else{
-		segment seg = search_GDT(selector);
-		uint32_t addr = seg.base + log_addr | 0x01ffffff;//segment base + logical addr offset
-		if(seg.base + seg.limit < addr)
-			error("Address out of bound");
-		return addr;
-	}
 }

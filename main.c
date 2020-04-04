@@ -6,6 +6,13 @@
 #include <stdlib.h>
 #include<stdint.h>
 
+#include "segmentation.h"
+#include "main_memory.h"
+#include "make_modules.h"
+#include "L1_cache.c"
+#include "segmentation.h"
+#include "tlb.h"
+
 typedef struct va_process{
   uint32_t va;
   uint8_t process_no;
@@ -20,15 +27,14 @@ void get_input_va(char* filesList[],int n){
 
     int num_completed=0;
     int curr_file=0;
+
     FILE *fp[n];
+
     for(int i=0;i<n;i++){
       fp[i] = fopen(filesList[i],"r");
     }
 
     while(1){
-      
-      //FILE *fp;
-      //fp = fopen(filesList[curr_file],"r"); // or this
 
       struct va_process call_function; //maybe this was causing the problem
 
@@ -61,6 +67,10 @@ void get_input_va(char* filesList[],int n){
 
         call_function.va=h;
         call_function.process_no=curr_file;
+
+        //Cache Lite, TLB lite abhi.
+
+
       }
       
       curr_file=(curr_file+1)%n;
@@ -72,10 +82,10 @@ void get_input_va(char* filesList[],int n){
         return;
       }
     }
-
-  
-
 }
+
+
+
 
 int main(int argc, char *argv[])
 {
@@ -129,12 +139,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
   get_input_va(filesList,num_input);
-  /*for(i=0;i<num_input;i++){
-    printf("%s",filesList[i] );
-
-  }*/
   
   return 0;
 }

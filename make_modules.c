@@ -6,11 +6,10 @@
 #include "make_modules.h"
 
 int LDTR_1 = 2;
-int LDTR_1 = 3;
-int LDTR_2 = 4;
-int LDTR_3 = 5;
-int LDTR_4 = 6;
-int LDTR_5 = 7;
+int LDTR_2 = 3;
+int LDTR_3 = 4;
+int LDTR_4 = 5;
+int LDTR_5 = 6;
 int CS = 1; //selector for segment for all process is the same, 1st entry of GDT gives address of code segment. This info is inferred extracted from sir's file.
 int DS = 7; //selector for all process is the same, 7th entry of LDT gives address of data segment. This info is inferred extracted from sir's file.
 
