@@ -26,9 +26,15 @@ In this project we have implementated Multilevel Cache with Multilevel TLB and S
 
 9) main.c : This is the driver file of the simulation. It reads addresses from input text files of the current directory and does a context switch after every 200 reads. The files that it reads contains the addresses on which the simulation will run. This function will continue reading until all the input files are read.
 
-Files:
-Compilation of code:
+# Compilation of code:
 
-Execution of code:
+# Execution of code:
 
-Structure of the program:
+# Structure of the program:
+The program is mainly divided into 5 parts:
+a) Main Memory
+b) Segmentation
+c) Paging
+d) TLB
+e) Cache
+Each part has function declaration file and a function description file. Components like TLB and Cache have multiple levels and hence multiple files, their names indicating their levels. All these modules are combined and used in the "main.c" file which uses all the functionality of the 5 parts to form a Memory Subystem simulation.
