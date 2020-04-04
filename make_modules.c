@@ -1,8 +1,6 @@
 /*File for initializing GDT, 5 LDTs with appropriate data filled in. These are structs.
   5 Local Data Segments and One global code segment.
 */
-
-
 #include "segmentation.h"
 #include "main_memory.h"
 #include "make_modules.h"
@@ -18,7 +16,7 @@ int DS = 7; //selector for all process is the same, 7th entry of LDT gives addre
 
 
 
-segment get_base_address(uint32_t selector, uint32_t process_num, int descriptor){
+segment get_segment_entry(uint32_t selector, uint32_t process_num, int descriptor){
 	uint32_t base_address;
 	if(desctriptor == 1){ //search LDT
 		segment LDT_entry = search_LDT(selector, process_num); //get address of segment. process num acts as value of ldtr.
@@ -28,6 +26,32 @@ segment get_base_address(uint32_t selector, uint32_t process_num, int descriptor
 		segment GDT_entry = search_GDT(CS);
 		return GDT_entry;
 	}
+}
+
+uint32_t* get_linear_address(uint32_t virtual_address, uint32_t process_num){
+
+	uint32_t address[2];
+
+	uint32_t linear_address;
+
+	uint32_t selector = virtual_address >> 28;
+	uint32_t desctriptor = (virtual_address >> 27) & DESCRIPTOR_MASK;
+	uint32_t offset  = virtual_address & OFFSET_MASK;
+
+	segment seg_entry = get_segment_entry(selector, process_num, offset, desctriptor);
+
+	//using only first 18 bits of linear address, no need of page_directory.
+
+	if(offset <= seg_entry.limit){
+		linear_address = seg_entry.base + offset;
+	else{
+		error("Error -- you are off the limits");
+	}
+
+	address[0] = linear_address;
+	address[1] = seg_entry.base_address;
+
+	return address;
 }
 
 int main(){
@@ -48,39 +72,21 @@ int main(){
 	make_entry_LDT(LDT_3, DS_START_3, 0x00040000, DS);
 	make_entry_LDT(LDT_4, DS_START_4, 0x00040000, DS);
 	make_entry_LDT(LDT_5, DS_START_5, 0x00040000, DS);
-
-
 	// Take input as virtual address from file and I'm assuming I have it here.
 	// I have information of process number also.
 
+	// The code below this line should ideally end up in our real main.c.
 	uint32_t virtual_address; //hex format
 	uint32_t process_num;
-	uint32_t linear_address;
 
-	uint32_t selector = virtual_address >> 28;
-	uint32_t desctriptor = (virtual_address >> 27) & DESCRIPTOR_MASK;
-	uint32_t offset  = virtual_address & OFFSET_MASK;
+	uint32_t* address;
 
-	segment seg_entry = get_linear_address(selector, process_num, offset, desctriptor);
+	address = get_linear_address(virtual_address, process_num);
 
-	//using only first 18 bits of linear address, no need of page_directory.
+	uint8_t page_num = (address[0] >> 10) & 0xFF;
 
-	if(offset <= seg_entry.limit){
-		linear_address = seg_entry.base + offset;
-	else{
-		error("Error -- you are off the limits");
-	}
+	uint32_t page_offset = address[0] & 0x3FF;
 
-	uint8_t page_index = (linear_address >> 10) & 0xFF;
-
-	uint32_t page_offset = linear_address & 0x3FF;
-
-	
-
-
-
-
-
-
+	try_accessing_data(address[1], page_num, page_offset);
 
 }
