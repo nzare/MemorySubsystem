@@ -1,5 +1,5 @@
 # DSTN Assignment 1 Question 7 by Group 4
-In this project we have implementated Multilevel Cache with Multilevel TLB and Segmentation with Paging as Memory Management method for the completion of Assignment-1 for the course Data Storage Technologies and Networks (CS F446).
+In this project we have implemented Multilevel Cache with Multilevel TLB and Segmentation with Paging as Memory Management method for the completion of Assignment-1 for the course Data Storage Technologies and Networks (CS F446).
 
 ## Group Members:
 1) Abhinav Pathak : 2017A7PS0937G
@@ -10,7 +10,7 @@ In this project we have implementated Multilevel Cache with Multilevel TLB and S
 ## List of files:
 1) L1_cache.h : 
 
-2) tlb.h : Contains declararion of the functions that will be used in TLB management (both L1 and L2 TLB).
+2) tlb.h : Contains the declararion of the functions that will be used in TLB management (both L1 and L2 TLB).
 
 3) segmentation.h : It contains the definition of the structure of a segment and the functions required for the segmentation part of Memory Management.
 
@@ -22,7 +22,7 @@ In this project we have implementated Multilevel Cache with Multilevel TLB and S
 
 7) l2_tlb.c : It contains implementation of functions for L2 TLB i.e. functions to initialize, search, flush and update L2 TLB in case of L2 TLB miss.
 
-8) segmentation.c : It contains implementation of functions used to initialize, make entry and search the Local and Global Descriptor Tables and to generate the Linear Address from the Logical Address.
+8) segmentation.c : It contains implementation of the functions used to initialize, make entry and search the Local and Global Descriptor Tables and to generate the Linear Address from the Logical Address.
 
 9) main.c : This is the driver file of the simulation. It reads addresses from input text files of the current directory and does a context switch after every 200 reads. The files that it reads contains the addresses on which the simulation will run. This function will continue reading until all the input files are read.
 
@@ -39,4 +39,4 @@ The program is mainly divided into 5 parts:
 4) TLB
 5) Cache
 
-Each part has a function declaration file and a function implementation file. Components like TLB and Cache have multiple levels and hence multiple files, their names indicating their levels. All these modules are combined and used in the "main.c" file which uses all the functionality of the 5 parts to form a Memory Subystem simulation.
+Each part has a function declaration file and a function implementation file. Components like TLB and Cache have multiple levels and hence multiple files, their names indicating their levels. All these modules are combined and used in the "main.c" file which uses all the functionality of the 5 parts to form a Memory Subsystem simulation.
