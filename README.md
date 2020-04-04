@@ -1,5 +1,5 @@
 # DSTN Assignment 1 Question 7 by Group 4
-In this project we have implemented Multilevel Cache with Multilevel TLB and Segmentation with Paging as Memory Management method for the completion of Assignment-1 for the course Data Storage Technologies and Networks (CS F446).
+In this project we have implemented Multilevel Cache with Multilevel TLB and Segmentation with Paging as the Memory Subsystem model for the completion of Assignment-1 for the course Data Storage Technologies and Networks (CS F446).
 
 ## Group Members:
 1) Abhinav Pathak : 2017A7PS0937G
@@ -12,7 +12,7 @@ In this project we have implemented Multilevel Cache with Multilevel TLB and Seg
 
 2) tlb.h : Contains the declararion of the functions that will be used in TLB management (both L1 and L2 TLB).
 
-3) segmentation.h : It contains the definition of the structure of a segment and the functions required for the segmentation part of Memory Management.
+3) segmentation.h : It contains the definition of the structure of a segment and the functions required for the segmentation part of Memory Subsystem.
 
 4) L1_cache.c : 
 
