@@ -39,4 +39,4 @@ The program is mainly divided into 5 parts:
 4) TLB
 5) Cache
 
-Each part has function declaration file and a function description file. Components like TLB and Cache have multiple levels and hence multiple files, their names indicating their levels. All these modules are combined and used in the "main.c" file which uses all the functionality of the 5 parts to form a Memory Subystem simulation.
+Each part has a function declaration file and a function implementation file. Components like TLB and Cache have multiple levels and hence multiple files, their names indicating their levels. All these modules are combined and used in the "main.c" file which uses all the functionality of the 5 parts to form a Memory Subystem simulation.
