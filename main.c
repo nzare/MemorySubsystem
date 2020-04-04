@@ -6,12 +6,6 @@
 #include <stdlib.h>
 #include<stdint.h>
 
-#include "segmentation.h"
-#include "main_memory.h"
-#include "make_modules.h"
-#include "L1_cache.h"
-#include "segmentation.h"
-#include "tlb.h"
 
 typedef struct va_process{
 
@@ -70,35 +64,7 @@ void get_input_va(char* filesList[],int n){
         call_function.va = curr_address; //This is virtual address
         call_function.process_no = curr_file; // This is process numeber.
 
-        //Cache Lite, TLB lite abhi.
-        uint8_t pg[3];
-        pg[0] = (curr_address & 0xFF000000) >> 24;
-        pg[1] = (curr_address & 0x00FF0000) >> 16;
-        pg[2] = (curr_address & 0x0000FF00) >> 8;
-
-
-        uint16_t fr = l1_tlb_search(pg);
-
-        if(fr!=0){
-          printf("Frame no found in tlb\n");
-        }
-
-        else{
-        uint32_t* address;
-
-        address = get_linear_address(call_function.va, call_function.process_no);
-
-        uint8_t page_num = (address[0] >> 10) & 0xFF;
-
-        uint32_t page_offset = address[0] & 0x3FF;
-
-        try_accessing_data(address[1], page_num, page_offset); //Directly go to main memmory.
-        
-        fr = (address[1]& 0x03FFFFFF)  >> 10;
-
-        l2_tlb_update(fr,pg);
-
-      }
+       
       
       }
       
@@ -126,7 +92,7 @@ int main(int argc, char *argv[])
 
     int pos;
 
-    dir = opendir("./");
+    dir = opendir("./Input_files/");
     int num_input =0;
 
     while ((entry = readdir(dir)) != NULL)
@@ -149,6 +115,9 @@ int main(int argc, char *argv[])
 
   int i=0;
 
+  
+  
+
   //Put file names into the array
   while ((entry = readdir(dir)) != NULL){
       if (entry->d_type != DT_REG)
@@ -159,9 +128,11 @@ int main(int argc, char *argv[])
         if (! strcmp(&entry->d_name[pos], ".txt"))
         {
 
-            filesList[i] = (char*) malloc (strlen(entry->d_name)+1);
-          strncpy (filesList[i],entry->d_name, strlen(entry->d_name) );
-          filesList[i][strlen(entry->d_name)]='\0';
+          char path[100] = "Input_files/";
+          filesList[i] = (char*) malloc (strlen(entry->d_name)+strlen(path)+1);
+          strcat(path,entry->d_name);
+          strncpy (filesList[i],path, strlen(path) );
+          filesList[i][strlen(path)]='\0';
           i++;
         }
   }
@@ -171,10 +142,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-  l1_tlb_initialize();
-  l2_tlb_initialize();
+  for(i=0;i<num_input;i++){
+    printf("%s\n",filesList[i] );
+  }
 
-  get_input_va(filesList,num_input);
+ get_input_va(filesList,num_input);
   
   return 0;
 }
