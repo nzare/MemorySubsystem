@@ -6,6 +6,12 @@
 #include <stdlib.h>
 #include<stdint.h>
 
+#include "segmentation.h"
+#include "main_memory.h"
+#include "make_modules.h"
+#include "L1_cache.h"
+#include "segmentation.h"
+#include "tlb.h"
 
 typedef struct va_process{
 
@@ -63,6 +69,37 @@ void get_input_va(char* filesList[],int n){
 
         call_function.va = curr_address; //This is virtual address
         call_function.process_no = curr_file; // This is process numeber.
+
+        //Cache Lite, TLB lite abhi.
+        uint8_t pg[3];
+        pg[0] = (curr_address & 0xFF000000) >> 24;
+        pg[1] = (curr_address & 0x00FF0000) >> 16;
+        pg[2] = (curr_address & 0x0000FF00) >> 8;
+
+
+        uint16_t fr = l1_tlb_search(pg);
+
+        if(fr!=0){
+          printf("Frame no found in tlb\n");
+        }
+
+        else{
+        uint32_t* address;
+
+        address = get_linear_address(call_function.va, call_function.process_no);
+        address = get_linear_address(call_function.va, call_function.process_no);
+
+        uint8_t page_num = (address[0] >> 10) & 0xFF;
+
+        uint32_t page_offset = address[0] & 0x3FF;
+
+        try_accessing_data(address[1], page_num, page_offset); //Directly go to main memmory.
+
+        fr = (address[1]& 0x03FFFFFF)  >> 10;
+
+        l2_tlb_update(fr,pg);
+
+      }
 
        
       
@@ -146,6 +183,8 @@ int main(int argc, char *argv[])
     printf("%s\n",filesList[i] );
   }
 
+  l1_tlb_initialize();
+  l2_tlb_initialize();
  get_input_va(filesList,num_input);
   
   return 0;
