@@ -16,7 +16,9 @@ In this project we have implemented Multilevel Cache with Multilevel TLB and Seg
 
 4) L1_cache.c : This file contains the structs for L1 cache entry, set and the write buffer required for the cache. It also contains the functions to initialize the cache, buffer, look through mechanism and LRU replacement of the cache entries.
 
-5) L2_cache_char.c : This file defines the L2 Cache entry and has implementations for various functions are responsible for initializion of the cache, reading from the cache, writing to the cache and clearing the cache entry.
+5) L2_cache.h : This file defines the L2 Cache entry and set and also declares functions for initializing the cache, updating the LRU counter, writing and reading the cache.
+
+5) L2_cache.c : This file has the implementations for various functions are responsible for initializion of the cache, reading from the cache, writing to the cache and clearing the cache entry, i.e., of the functions declared in L2_cache.h.
 
 6) l1_tlb.c : It contains the implementation of the funtions for L1 TLB, i.e., initializing the L1 TLB, searching for an entry, flushing the TLB and calling of search function of L2 TLB (if there is a miss in L1 TLB).
 
