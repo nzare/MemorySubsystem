@@ -1,5 +1,5 @@
 /*The implemetatoin of Segmentation
-So, to summarize:
+To summarize:
 32 bits: Logical adrr{
 	25 bits : offset
 	7 bits : selector {
@@ -8,14 +8,15 @@ So, to summarize:
 		2 bits: Protection Level
 	}
 }
-10 bits will give tell us to look into which desc table.
+10 bits will tell us to look into which descriptor table.
 Then we will get the the seg number and that will give us the base and limit and other status values
-Base : 32 bits
-Limit : 16 bits
-Granularity: 1
-Sys/application : 1
-Privilege Level: 2 bits 
-Total : 52 bits */
+Base 		: 32 bits
+Limit		: 16 bits
+Granularity	: 1 bit
+Sys/application : 1 bit
+Privilege Level	: 2 bit
+Total 		: 52 bits */
+
 #include "segmentation.h"
 void init_GDT(){
 	GDT = (segment *)(malloc(sizeof(segment)*MAX_ENTRIES));
@@ -68,8 +69,10 @@ segment search_LDT(uint8_t selector){
 	segment* LDT = (segment *)(GDT[ldtr_index].base);//base address of the LDT
 	if(index > GDT[ldtr_index].index)
 		error("Index Out of LDT Bound");
-	if(LDT[index].status & 0x0003 >= protec){//assuming lesser protection value means higher protection. So the entry being
-											   //accessed must have greater or equal value
+	
+	//assuming lesser protection value means higher protection. So the entry being
+	//accessed must have greater or equal value
+	if(LDT[index].status & 0x0003 >= protec){
 		return LDT[index];
 	}
 	else
