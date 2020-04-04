@@ -42,7 +42,7 @@ int conv_to_linear(int log_addr);
 
 //This function is used to make a new entry in the segment table
 void make_entry_LDT(segment *LDT,uint8_t selector ,uint32_t base, uint16_t limit);
-void make_entry_GDT(segment *GDT, uint8_t selector,uint32_t base, uint16_t limit);
+void make_entry_GDT(segment *GDT,uint8_t selector ,uint32_t base, uint16_t limit);
 
 //This function is used to search for the required entry
 void init_desc_tables();
