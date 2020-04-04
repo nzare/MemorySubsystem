@@ -7,7 +7,7 @@ In this project we have implementated Multilevel Cache with Multilevel TLB and S
 3) Himanshu Likhar : 2017A7PS0062G
 4) Nidhi Zare : 2017A7PS0139G
 
-# List of files:
+## List of files:
 1) L1_cache.h : 
 
 2) tlb.h : Contains declararion of the functions that will be used in TLB management (both L1 and L2 TLB).
@@ -26,11 +26,11 @@ In this project we have implementated Multilevel Cache with Multilevel TLB and S
 
 9) main.c : This is the driver file of the simulation. It reads addresses from input text files of the current directory and does a context switch after every 200 reads. The files that it reads contains the addresses on which the simulation will run. This function will continue reading until all the input files are read.
 
-# Compilation of code:
+## Compilation of code:
 
-# Execution of code:
+## Execution of code:
 
-# Structure of the program:
+## Structure of the program:
 The program is mainly divided into 5 parts:
 a) Main Memory
 b) Segmentation
