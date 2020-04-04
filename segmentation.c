@@ -17,7 +17,7 @@ Sys/application : 1
 Privilege Level: 2 bits 
 Total : 50 bits */
 #include "segmentation.h"
-void init_GDT(){
+segment* init_GDT(){
 	GDT = (segment *)(malloc(sizeof(segment)*MAX_ENTRIES));
 	return GDT;
 }
@@ -52,10 +52,10 @@ void make_entry_GDT(segment *GDT, uint32_t base, uint16_t limit){
 		}
 	}	
 }
-segment search_LDT(uint16_t selector){
+segment search_LDT(uint16_t selector, uint16_t process_num){ //process num acts as LDTR value.
 	int8_t index = selector & 0x03f8;//0000011111111000
 	uint8_t protec = selector & 0x0003;//0000000000000011
-	int8_t ldtr_index = *LDTR & 0x03f8;//getting the entry index from LDTR
+	int8_t ldtr_index = process_num;
 	segment* LDT = (segment *)(GDT[ldtr_index].base);//base address of the LDT
 	uint16_t limit = GDT[ldtr_index].limit;//length of the LDT
 	if(index>limit)

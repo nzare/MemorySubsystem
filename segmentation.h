@@ -39,7 +39,7 @@ typedef struct segment_entry
 	its execution and exited.*/
 } segment;
 extern segment *GDT;
-extern uint16_t *LDTR;
+//extern uint16_t *LDTR; No need for this, process number will do.
 //This function is used to generate the linear address
 int conv_to_linear(int log_addr);
 
