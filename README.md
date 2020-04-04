@@ -14,19 +14,19 @@ In this project we have implemented Multilevel Cache with Multilevel TLB and Seg
 
 3) segmentation.h : It contains the definition of the structure of a segment and the functions required for the segmentation part of Memory Subsystem.
 
-4) L1_cache.c : This file contains the structs for L1 cache entry, set and the write buffer required for the cache. It also contains the functions to initialize the cache, buffer, look through mechanism and LRU replacement of the cache entries.
+4) L2_cache.h : This file defines the L2 Cache entry and set and also declares functions for initializing the cache, updating the LRU counter, writing and reading the cache.
 
-5) L2_cache.h : This file defines the L2 Cache entry and set and also declares functions for initializing the cache, updating the LRU counter, writing and reading the cache.
+5) L1_cache.c : This file contains the structs for L1 cache entry, set and the write buffer required for the cache. It also contains the functions to initialize the cache, buffer, look through mechanism and LRU replacement of the cache entries.
 
-5) L2_cache.c : This file has the implementations for various functions are responsible for initializion of the cache, reading from the cache, writing to the cache and clearing the cache entry, i.e., of the functions declared in L2_cache.h.
+6) L2_cache.c : This file has the implementations for various functions are responsible for initializion of the cache, reading from the cache, writing to the cache and clearing the cache entry, i.e., of the functions declared in L2_cache.h.
 
-6) l1_tlb.c : It contains the implementation of the funtions for L1 TLB, i.e., initializing the L1 TLB, searching for an entry, flushing the TLB and calling of search function of L2 TLB (if there is a miss in L1 TLB).
+7) l1_tlb.c : It contains the implementation of the funtions for L1 TLB, i.e., initializing the L1 TLB, searching for an entry, flushing the TLB and calling of search function of L2 TLB (if there is a miss in L1 TLB).
 
-7) l2_tlb.c : It contains implementation of functions for L2 TLB i.e. functions to initialize, search, flush and update L2 TLB in case of L2 TLB miss.
+8) l2_tlb.c : It contains implementation of functions for L2 TLB i.e. functions to initialize, search, flush and update L2 TLB in case of L2 TLB miss.
 
-8) segmentation.c : It contains implementation of the functions used to initialize, make entry and search the Local and Global Descriptor Tables and to generate the Linear Address from the Logical Address.
+9) segmentation.c : It contains implementation of the functions used to initialize, make entry and search the Local and Global Descriptor Tables and to generate the Linear Address from the Logical Address.
 
-9) main.c : This is the driver file of the simulation. It reads addresses from input text files of the current directory and does a context switch after every 200 reads. The files that it reads contains the addresses on which the simulation will run. This function will continue reading until all the input files are read.
+10) main.c : This is the driver file of the simulation. It reads addresses from input text files of the current directory and does a context switch after every 200 reads. The files that it reads contains the addresses on which the simulation will run. This function will continue reading until all the input files are read.
 
 ## Compilation of code:
 
