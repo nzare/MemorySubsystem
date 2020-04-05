@@ -172,6 +172,8 @@ uint32_t page_offset;
 
 int main(int argc, char *argv[])
 {
+    //Write output to text file
+    FILE* out = freopen("g4_output.txt","w",stdout);
     DIR *dir;
  
     struct dirent *entry;
@@ -231,7 +233,7 @@ int main(int argc, char *argv[])
  
   l1_tlb_initialize();
   l2_tlb_initialize();
- get_input_va(filesList,num_input);
-  
+  get_input_va(filesList,num_input);
+  fclose(out);
   return 0;
 }
