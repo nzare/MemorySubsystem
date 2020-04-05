@@ -62,7 +62,7 @@ Once a virtual address is given, l1_tlb is accessed. If there is a hit, it passe
 ## Compilation and Execution of code:
 To compile and execute the code, just write “make run” (without the inverted commas). The output log is stored in a file named “g4_output.txt”.
 #### Note:
-Please do not change the directory of the input files. Their destination has been hard-coded to be "./Input_files/". If you want to run the code with your inout files, please paste them in the folder with the aforementioned name.
+Please do not change the directory of the input files. Their destination has been hard-coded to be "./Input_files/". If you want to run the code with your input files, please paste them in the folder with the aforementioned name.
 
 ## Bugs, Implementation Issues & Further To Do’s:
 
