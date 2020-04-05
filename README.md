@@ -10,10 +10,10 @@ L2 Cache: 32KB, 32B, 8 Way set associative cache. The cache follows Write back a
 Main Memory with Memory Management: 64MB Main memory with LRU as replacement policy. The memory management scheme used is Segmentation + Paging.
 
 ## Group Members:
-Fenil Suchak : 2016B3A70541G
-Himanshu Likhar : 2017A7PS0062G
-Nidhi Zare : 2017A7PS0139G
-Abhinav Pathak : 2017A7PS0937G
+1) Fenil Suchak : 2016B3A70541G
+2) Himanshu Likhar : 2017A7PS0062G
+3) Nidhi Zare : 2017A7PS0139G
+4) Abhinav Pathak : 2017A7PS0937G
 
 ## List of files:
 
