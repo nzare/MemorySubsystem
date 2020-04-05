@@ -61,8 +61,12 @@ Once a virtual address is given, l1_tlb is accessed. If there is a hit, it passe
 
 ## Compilation and Execution of code:
 To compile and execute the code, just write “make run” (without the inverted commas). The output log is stored in a file named “g4_output.txt”.
+#### Note:
+Please do not change the directory of the input files. Their destination has been hard-coded to be "./Input_files/". If you want to run the code with your inout files, please paste them in the folder with the aforementioned name.
 
-## Bugs and Implementation Issues:
-TLB is currently a per-process TLB. Therefore, It cannot differentiate between segments. In the case of two segments accessing the same page number, the TLB allows one segment to access another segment’s page. Protection bits can be added to resolve this but due to brevity of time, this could not be done.
+## Bugs, Implementation Issues & Further To Do’s:
 
+1) TLB is currently a per-process TLB. Therefore, It cannot differentiate between segments. In the case of two segments accessing the same page number, the TLB allows one segment to access another segment’s page. Protection bits can be added to resolve this but due to brevity of time, this could not be done.
+
+2) Due to incomplete information of what writes are and what data is, we have not used functions already written for writes in cache. Like write_buffer, write back. Write buffer was implemented using threads to update other components asynchronously.
 
