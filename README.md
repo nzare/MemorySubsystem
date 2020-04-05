@@ -25,13 +25,13 @@ In this project, we have implemented Multilevel Cache with Multilevel TLB and Se
 
 3) l2_tlb.c : It contains the implementation of functions for L2 TLB i.e. functions to initialize, search, flush and update L2 TLB in case of L2 TLB miss.
 
-4)segmentation.h : It contains the definition of the structure of a segment and the functions required for the segmentation part of Memory Subsystem.
+4) segmentation.h : It contains the definition of the structure of a segment and the functions required for the segmentation part of Memory Subsystem.
 
 5) segmentation.c : It contains implementation of the functions used to initialize, make entry and search the Local and Global Descriptor Tables and to generate the Linear Address from the Logical Address.
 
 6) L1_cache.h : It declares the structure for the L1 cache module.
 
-7)L1_cache.c : This file contains the structs for L1 cache entry, set and the write buffer required for the cache. It also contains the functions to initialize the cache, buffer, look through mechanism, read the cache, update the cache, and LRU square matrix replacement of the cache entries.
+7) L1_cache.c : This file contains the structs for L1 cache entry, set and the write buffer required for the cache. It also contains the functions to initialize the cache, buffer, look through mechanism, read the cache, update the cache, and LRU square matrix replacement of the cache entries.
 
 8) L2_cache.h : This file defines the L2 Cache entry and set and also declares functions for initializing the cache, updating the LRU counter, reading the cache, calling the main memory read, and updating the cache.
 
