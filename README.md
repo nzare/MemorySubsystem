@@ -59,11 +59,10 @@ Cache
 Each part has a function declaration file and a function implementation file. Components like TLB and Cache have multiple levels and hence multiple files, with their names indicating their levels. All these modules are combined and used in the "main.c" file which uses all the functionality of the 5 core components to form a Memory Subsystem simulation. 
 Once a virtual address is given, l1_tlb is accessed. If there is a hit, it passes the physical address. If there is a miss, it goes and checks l2_tlb, which repeats the process. If both miss, then there entries in both the TLBs are updated accordingly. The physical address is passed to L1 cache and search is performed to find the corresponding data. If L1 cache misses, it performs look through operation in L2 and consequently main memory to get the desired data. 
 
-## Compilation of code:
-
-## Execution of code:
+## Compilation and Execution of code:
+To compile and execute the code, just write “make run” (without the inverted commas). The output log is stored in a file named “g4_output.txt”.
 
 ## Bugs and Implementation Issues:
-Write here
+TLB is currently a per-process TLB. Therefore, It cannot differentiate between segments. In the case of two segments accessing the same page number, the TLB allows one segment to access another segment’s page. Protection bits can be added to resolve this but due to brevity of time, this could not be done.
 
 
