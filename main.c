@@ -71,8 +71,8 @@ void get_input_va(char* filesList[],int n){
 
   uint32_t frno;
   uint64_t* address;
-  uint8_t page_num;
-  uint32_t physical_address;
+  //uint8_t page_num;
+  //uint32_t physical_address;
   int file_pos[n];
 
    for(int i=0;i<n;i++)
@@ -89,10 +89,10 @@ void get_input_va(char* filesList[],int n){
 
   // printf("hereeeeee\n");
 int count=0;
-uint32_t va;
-uint32_t process_no;
+//uint32_t va;
+//uint32_t process_no;
 address = malloc(2 * sizeof(uint64_t));
-uint32_t page_offset;
+//uint32_t page_offset;
   while(1){
     struct va_process call_function;
     l1_tlb_flush();
@@ -235,5 +235,6 @@ int main(int argc, char *argv[])
   l2_tlb_initialize();
   get_input_va(filesList,num_input);
   fclose(out);
+  printf("Please Check 'g4_output.txt' for output log\n");
   return 0;
 }
