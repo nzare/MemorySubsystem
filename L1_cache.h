@@ -12,19 +12,27 @@
 #define BYTE_OFFSET_MASK (0x00000001)
 #define MAX_BUFFER_SIZE 8 // 8 bytes.
 
-extern const int squate_mat_arr [0x7, 0XB, 0xD, 0xE];
+extern uint8_t square_mat_arr[4];
+
 void l1_initialize();
 
+int mm_cache_read();
 
 void buffer_init();
 
-int l1_cache_read(uint32_t address, char** read);
+int l1_cache_read(uint32_t address);
 
-int l1_cache_write(uint32_t address, char* write);
+int look_through_read(uint32_t address);
 
-void add_into_write_through_buffer(uint32_t address, char* write);
+void l1_cache_select_lru_and_replace(uint32_t address);
 
-void actual_write_through();
+void init_square_mat_array();
+
+// int l1_cache_write(uint32_t address, char* write);
+
+// void add_into_write_through_buffer(uint32_t address, char* write);
+
+// void actual_write_through();
 
 //Struct for Cache Module
 

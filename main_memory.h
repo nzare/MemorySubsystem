@@ -21,7 +21,7 @@
 #define DS_START_4 0x00001400
 #define DS_START_5 0x00001800
 
-extern char* main_memory[0x02FFFFFF];
+extern char main_memory[0x02FFFFFF][2];
 
 extern int occupancy[0x02FFFFFF];
 
@@ -37,4 +37,8 @@ void initialize_page_table_for_segment(uint32_t start_address);
 
 void update_page_table_for_segment(uint32_t segment_base, uint8_t page_num, char* hex_address);
 
-char* address_to_hex_string(uint32_t address);
+void address_to_hex_string(uint32_t address, char** hex_address);
+
+uint32_t try_accessing_data(uint32_t segment_base, uint8_t page_num, uint16_t offset);
+
+void init_memory();

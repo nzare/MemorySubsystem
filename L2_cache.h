@@ -37,19 +37,17 @@
 #define WORDS_PER_CACHE_LINE 16
 #define BYTES_PER_CACHE_LINE 32
 
-void l2_initialize();
+extern void l2_initialize();
 
-void l2_update_counter_bits(uint32_t temp_index, int line);
+extern int l2_mm_cache_read (uint32_t address);
 
-void l2_cache_read(uint32_t address, char **read_data, uint8_t *status);
+extern int l2_cache_read(uint32_t address);
 
-void l2_cache_write(uint32_t address, char *write_data, uint8_t *status);
+extern int l2_look_through_read(uint32_t address);
 
-void l2_insert_line(uint32_t address, uint32_t write_data[], 
-        uint32_t *evicted_writeback_address, 
-        uint32_t evicted_writeback_data[], 
-        uint8_t *status);
+extern void l2_cache_select_lru_and_replace(uint32_t address);
 
+extern void l2_update_counter_bits(uint32_t temp_index, int line);
 
 
 /***************************************************

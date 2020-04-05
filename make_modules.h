@@ -1,4 +1,4 @@
-#define OFFSET_MASK 0x01FFFFFF
+#define OFFSET_MASK 0x0003FFFF
 #define DESCRIPTOR_MASK 1
 
 extern int LDTR_1;
@@ -11,7 +11,7 @@ extern int DS;
 
 segment get_segment_entry(uint32_t selector, uint32_t process_num, int descriptor);
 
-uint32_t* get_linear_address(uint32_t virtual_address, uint32_t process_num);
+void get_linear_address(uint32_t virtual_address, uint32_t process_num, uint64_t** hex_address);
 
-void try_accessing_data(uint32_t segment_base, uint8_t page_num, uint16_t offset);
+void make_descriptor_modules();
 

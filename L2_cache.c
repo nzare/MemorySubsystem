@@ -1,50 +1,11 @@
-
-/************************************************************
-
-  This file contains the code for the L2 cache. It is a 32KB, 32B, 
-  8 Way set associative with Write Back, Look Through mechanisms, 
-  and LRU Counter as its replacement policy
-
-   Given cache line size = 32B = 16 words per cache line
-   32KB = 16K Words = 1K cache lines = 128 sets
-   
-   Each cache line has: valid bit, reference bit, dirty bit,
-                        tag, and cache-line data.
-
-    An address is decomposed as follows (from lsb to msb):
-    2 bits are used for byte offset within a word (bits 0-1)
-    4 bits are used for word offset within a cache line (bits 2-5)
-    7 bits are used for the set index, since there are 128 sets per cache (bits 6-12).
-    19 bits remaining are used as the tag (bits 13-31)
-
-   Therefore, 32-bit address is decomposed as follows:
-
-          19             7            4        2
-    ------------------------------------------------
-   |     tag      |     set      | word   |  byte  |
-   |              |    index     | offset | offset |
-    ------------------------------------------------
-
-   Each cache entry is structured as follows:
-
-    1 1    3        8      19 
-    ------------------------------------------------------
-   |v|d|counter|reserved| tag |  16-word cache line data |
-    ------------------------------------------------------
-
-**************************************************************/
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include "L2_cache.h"
-
-/************************************************
-              l2_initialize()
-
-This procedure initializes the L2 cache
-************************************************/
+#include "segmentation.h"
+#include "main_memory.h"
+#include "make_modules.h"
 
 void l2_initialize()
 {
@@ -69,19 +30,6 @@ void l2_initialize()
 }
 
 
-/**********************************************************
-
-             l2_update_counter_bits()
-
-This procedure updates the counter bits of the particular
-set that is mentioned in the address passed to the function.
-It sets the counter value of the most recently used entry
-to 111 and decrements the counter value by 1 of all the 
-other entries in that set
-
-
-**********************************************************/
-
 void l2_update_counter_bits(uint32_t temp_index, int line)
 {
   l2_cache[temp_index].lines[line].v_d_c_tag = (l2_cache[temp_index].lines[line].v_d_c_tag | L2_COUNTER_MASK);
@@ -100,385 +48,71 @@ void l2_update_counter_bits(uint32_t temp_index, int line)
 }
 
 
-/***************************************************************
 
-                      l2_cache_read()
+int l2_mm_cache_read(uint32_t address)
+{ 
 
-This procedure implements the reading of a single byte
-to the L2 cache. 
-
-The parameters are:
-
-address:  unsigned 32-bit address. This address can be anywhere within
-          a cache line.
-
-read_data: an output parameter (thus, a pointer to it is passed).
-         On a read operation, if there is a cache hit, the appropriate
-         byte of the appropriate cache line in the cache is written
-         to read_data.
-
-status: this in an 8-bit output parameter (thus, a pointer to it is 
-        passed).  The lowest bit of this byte should be set to 
-        indicate whether a cache hit occurred or not:
-              cache hit: bit 0 of status = 1
-              cache miss: bit 0 of status = 0
-
-***************************************************************/
-
-
-void l2_cache_read(uint32_t address, char **read_data, uint8_t *status)
-{
-
-  //Extract from the address the tag bits.
-  //Use the L2_ADDRESS_TAG_MASK mask to mask out the appropriate
-  //bits of the address and L2_ADDRESS_TAG_SHIFT to shift the 
-  //bits the appropriate amount.
-
-  //CODE HERE
-  uint32_t temp_tag = (address & L2_ADDRESS_TAG_MASK) >> L2_ADDRESS_TAG_SHIFT;
-
-  //Extract from the address the index of the cache set in the cache.
-  //Use the L2_SET_INDEX_MASK mask to mask out the appropriate
-  //bits of the address and L2_SET_INDEX_SHIFT to shift the 
-  //bits the appropriate amount.
-
-  //CODE HERE
-  uint32_t temp_index = (address & L2_SET_INDEX_MASK) >> L2_SET_INDEX_SHIFT;
-
-  //Extract from the address the word offset within the cache line.
-  //Use the WORD_OFFSET_MASK to mask out the appropriate bits of
-  //the address and WORD_OFFSET_SHIFT to shift the bits the 
-  //appropriate amount.
-
-  //CODE HERE
-  uint32_t temp_word_offset = (address & WORD_OFFSET_MASK) >> WORD_OFFSET_SHIFT;
-
-  //Extract from the address the byte offset within the cache line.
-
-  //CODE HERE
-  uint32_t temp_byte_offset = (address & BYTE_OFFSET_MASK);
-
-
-  //Within the set specified by the set index extracted from the address,
-  //look through the cache entries for an entry that 1) has its valid 
-  //bit set AND 2) has a tag that matches the tag extracted from the address.
-
-  //If no such entry exists in the set, then the result is a cache miss.
-  //The low bit of the status output parameter should be set to 0. Look through
-  //performed to get data from the Main Memory.
-
-  //Otherwise, if an entry is found with a set valid bit and a matching tag, 
-  //then it is a cache hit. The status output parameter should be set to 1.
-
-  //The appropriate byte (as specified by the byte offset extracted from 
-  //the address) of the entry's cache line data should be written to read_data.
-
-  //CODE HERE
-  status = 0;
-
-  for (int i = 0; i < 8; i++) 
-  {
-    if (((l2_cache[temp_index].lines[i].v_d_c_tag & L2_VBIT_MASK) == (1 << 31)) && ((l2_cache[temp_index].lines[i].v_d_c_tag & L2_ENTRY_TAG_MASK) == temp_tag)) 
-    {
-      status = 1;
-      *read = l2_cache[temp_index].lines[i].cache_line[temp_word_offset][temp_byte_offset];
-      l2_update_counter_bits(temp_index, i);
-      return;
-    }
-  }
-
-  //Performing 'Look Through'
-  //If the status is 0 from the for-loop, then it's a cache miss.
-  //Look through the main memory for the corresponding address and get 
-  //the resulting entry to L2: 
-  //1) Call main_memory_read with appropriate parameters from here. 
-  //2) If there is valid data in the main memory at that address,
-  //fetch it and update one of the cache lines using l2_insert_line()
-  //3) Copy the contents from updated line to read_data parameter from 
-  //this function itself.
-  //4) Else data in address is invalid and hence return an error.
-
-
-  //CODE HERE
-  if (status == 0) 
-  {
-    main_memory_read(address);
-  }
+  //address is the physical address.
+  cache_mem_access_data(address);
+  return 1; // this always a true case. Main memory is always a hit.
 
 }
 
 
-/***************************************************************
-
-                      l2_cache_write()
-
-This procedure implements the writing of a single byte
-to the L2 cache. 
-
-The parameters are:
-
-address:  unsigned 32-bit address. This address can be anywhere within
-          a cache line.
-
-write_data: an input parameter (a pointer to it is passed).
-         On a write operation, if there is a cache hit, the appropriate
-         byte of the appropriate cache line in the cache is replaced
-         by contents of write_data parameter.
-
-status: this in an 8-bit output parameter (thus, a pointer to it is 
-        passed).  The lowest bit of this byte should be set to 
-        indicate whether a cache hit occurred or not:
-              cache hit: bit 0 of status = 1
-              cache miss: bit 0 of status = 0
-
-***************************************************************/
-
-
-void l2_cache_write(uint32_t address, char *write_data, uint8_t *status)
+int l2_look_through_read(uint32_t address)
 {
 
-  //Extract from the address the tag bits.
-  //Use the L2_ADDRESS_TAG_MASK mask to mask out the appropriate
-  //bits of the address and L2_ADDRESS_TAG_SHIFT to shift the 
-  //bits the appropriate amount.
-
-  //CODE HERE
-  uint32_t temp_tag = (address & L2_ADDRESS_TAG_MASK) >> L2_ADDRESS_TAG_SHIFT;
-
-  //Extract from the address the index of the cache set in the cache.
-  //Use the L2_SET_INDEX_MASK mask to mask out the appropriate
-  //bits of the address and L2_SET_INDEX_SHIFT to shift the 
-  //bits the appropriate amount.
-
-  //CODE HERE
-  uint32_t temp_index = (address & L2_SET_INDEX_MASK) >> L2_SET_INDEX_SHIFT;
-
-  //Extract from the address the word offset within the cache line.
-  //Use the WORD_OFFSET_MASK to mask out the appropriate bits of
-  //the address and WORD_OFFSET_SHIFT to shift the bits the 
-  //appropriate amount.
-
-  //CODE HERE
-  uint32_t temp_word_offset = (address & WORD_OFFSET_MASK) >> WORD_OFFSET_SHIFT;
-
-  //Extract from the address the byte offset within the cache line.
-
-  //CODE HERE
-  uint32_t temp_byte_offset = (address & BYTE_OFFSET_MASK);
-
-
-  //Within the set specified by the set index extracted from the address,
-  //look through the cache entries for an entry that 1) has its valid 
-  //bit set AND 2) has a tag that matches the tag extracted from the address.
-
-  //If no such entry exists in the set, then the result is a cache miss.
-  //The low bit of the status output parameter should be set to 0. There
-  //is nothing further to do in this case.
-
-  //Otherwise, if an entry is found with a set valid bit and a matching tag, 
-  //then it is a cache hit. The status output parameter should be set to 1.
-
-  //The value of write_data should be written to the appropriate word 
-  //of the entry's cache line data and the entry's dirty bit should be set.
-
-  //CODE HERE
-  for (int i = 0; i < 8; i++) 
+  uint32_t status;
+  status = l2_mm_cache_read(address);
+  if(status == 1)
   {
-    if (((l2_cache[temp_index].lines[i].v_d_c_tag & L2_VBIT_MASK) == (1 << 31)) && ((l2_cache[temp_index].lines[i].v_d_c_tag & L2_ENTRY_TAG_MASK) == temp_tag)) 
-    {      
-      status = 1;
-      strcpy(l2_cache[temp_index].lines[i].cache_line[temp_word_offset][temp_byte_offset], write);
-      l2_update_counter_bits(temp_index, i);
-      return;
-    }
-
+    printf("Data found in Main memory, Updating L2\n");
+    l2_cache_select_lru_and_replace(address);
+    return 1;
   }
-
-  //If the status is 0 from the for-loop, then it's a cache miss.
-  //Look through the main memory for the corresponding address and get 
-  //the resulting entry to L2: 
-  //1) Call main_memory_read with appropriate parameters from here. 
-  //2) If there is valid data in the main memory at that address,
-  //fetch it and update one of the cache lines using l2_insert_line()
-  //3) Copy the contents from write_data parameter to the appropriate 
-  //byte space in the cache line in this function itself.
-  //4) Else data in address is invalid and hence return an error.
-
-  //CODE HERE
-
+  else return 0;
 
 }
 
-
-/************************************************************
-
-                 l2_insert_line()
-
-This procedure inserts a new cache line into the L2 cache.
-
-The parameters are:
-
-address: 32-bit memory address for the new cache line.
-
-write_data: an array of 32 bytes containing the 
-            cache line data to be inserted into the cache.
-
-evicted_writeback_address: a 32-bit output parameter (thus,
-          a pointer to it is passed) that, if the cache line
-          being evicted needs to be written back to memory,
-          should be assigned the memory address for the evicted
-          cache line.
-          
-evicted_writeback_data: an array of 32 bytes that, if the cache 
-          line being evicted needs to be written back to memory,
-          should be assigned the cache line data for the evicted
-          cache line. Since there are 16 words per cache line, the
-          actual parameter should be an array of at least 16 words.
-
-status: this in an 8-bit output parameter (thus, a pointer to it is 
-        passed).  The lowest bit of this byte should be set to 
-        indicate whether the evicted cache line needs to be
-        written back to memory or not, as follows:
-            0: no write-back required
-            1: evicted cache line needs to be written back.
+void l2_cache_select_lru_and_replace(uint32_t address)
+{
+	uint32_t temp_tag = (address & L2_ADDRESS_TAG_MASK) >> L2_ADDRESS_TAG_SHIFT;
+    uint32_t temp_index = (address & L2_SET_INDEX_MASK) >> L2_SET_INDEX_SHIFT;
+	int to_be_replaced = 0;
+	for(int i = 0; i < 8; i++){
+		uint32_t temp_count = (l2_cache[temp_index].lines[i].v_d_c_tag & L2_COUNTER_MASK) >> 27;
+		if(temp_count == 0){
+			to_be_replaced = i;
+		}
+	}
+	l2_cache[temp_index].lines[to_be_replaced].v_d_c_tag = ((l2_cache[temp_index].lines[to_be_replaced].v_d_c_tag & 0xFFF80000) | temp_tag);
+	l2_cache[temp_index].lines[to_be_replaced].v_d_c_tag = (l2_cache[temp_index].lines[to_be_replaced].v_d_c_tag | L2_VBIT_MASK);
+	l2_update_counter_bits(temp_index, to_be_replaced);
+}
 
 
- The cache replacement algorithm uses an LRU counter alogrithm. 
- A cache entry (among the cache entries in the set) is 
- chosen to be written to in the following order of preference:
-    - valid bit = 0
-    - counter value is lowest
-*********************************************************/
 
-
-void l2_insert_line(uint32_t address, char *write_data, 
-		    uint32_t *evicted_writeback_address, 
-		    char evicted_writeback_data[], 
-		    uint8_t *status)
+int l2_cache_read(uint32_t address)
 {
 
-  //Extract from the address the index of the cache set in the cache.
-  //see l2_cache_access above
-
-  //CODE HERE
-  uint32_t temp_index = (address & L2_SET_INDEX_MASK) >> L2_SET_INDEX_SHIFT;
-
-  //Extract from the address the tag bits. 
-  //see l2_cache_access above.
-
-  //CODE HERE
   uint32_t temp_tag = (address & L2_ADDRESS_TAG_MASK) >> L2_ADDRESS_TAG_SHIFT;
-
-
-  //In a loop, iterate through each entry in the set.
-  int zero_counter = 0;  
-
-  //LOOP STARTS HERE
-  for (int i = 0; i < 8; i++) 
-  {
-
-  //If the current entry has a zero v bit, then overwrite
-  //the cache line in the entry with the data in write_data,
-  //set the v bit of the entry, clear the dirty bit, update the 
-  //counter to 111, and write the new tag to the entry.
-  //Set the low bit of the status output parameter to 0 to indicate 
-  //the evicted line does not need to be written back. There is nothing 
-  //further to do, the procedure can return.
-
-  //CODE HERE
-    if ((l2_cache[temp_index].lines[i].v_d_c_tag & L2_VBIT_MASK) == (0 << 31)) 
-    {
-
-      //copying data from write_data to the cache line
-      for (int j=0; j<16; j++) 
-      {
-        l2_cache[temp_index].lines[i].cache_line[j] = write_data[j];
-      }
-
-      //setting the valid bit and updating the counter bits (111)
-      l2_cache[temp_index].lines[i].v_d_c_tag = (l2_cache[temp_index].lines[i].v_d_c_tag | L2_VBIT_MASK);
-      l2_update_counter_bits(temp_index, i);
-
-      //clearing dirty bit
-      l2_cache[temp_index].lines[i].v_d_c_tag = (l2_cache[temp_index].lines[i].v_d_c_tag & 0xBFFFFFFF);
-
-      //writing the new tag to entry from given address
-      l2_cache[temp_index].lines[i].v_d_c_tag = (l2_cache[temp_index].lines[i].v_d_c_tag | temp_tag);
-
-      
-      status = 0;
-      return;
-
-    }
-
-  //  Otherwise, we remember the entry we encounter which has counter = 000
-    else if (((l2_cache[temp_index].lines[i].v_d_c_tag & L2_COUNTER_MASK) >> 25) == 0x0) 
-    {
-      zero_counter = i;
-    }
-
-
-  //LOOP ENDS HERE
-  }
-
-  //When we're done looping, we choose the entry with the highest preference 
-  //on the above list to evict.
-
-
-  //CODE HERE
-  //Don't need
-
-  //if the dirty bit of the cache entry to be evicted is set, then the data in the 
-  //cache line needs to be written back. The address to write the current entry 
-  //back to is constructed from the entry's tag and the set index in the cache by:
-  // (evicted_entry_tag << L2_ADDRESS_TAG_SHIFT) | (set_index << L2_SET_INDEX_SHIFT)
-  //This address should be written to the evicted_writeback_address output
-  //parameter. The cache line data in the evicted entry should be copied to the
-  //evicted_writeback_data array.
-
-  //Also, if the dirty bit of the chosen entry is been set, the low bit of the status byte 
-  //should be set to 1 to indicate that the write-back is needed. Otherwise,
-  //the low bit of the status byte should be set to 0.
-
-  //CODE HERE
-  if ((l2_cache[temp_index].lines[zero_counter].v_d_c_tag & L2_DIRTYBIT_MASK) == (1 << 30)) 
-  {
-    evicted_writeback_address = (((l2_cache[temp_index].lines[zero_counter].v_d_c_tag & L2_ENTRY_TAG_MASK) << L2_ADDRESS_TAG_SHIFT) | (temp_index << L2_SET_INDEX_SHIFT));
-    for (int i = 0; i < 16; i++) 
-    {
-      evicted_writeback_data = l2_cache[temp_index].lines[zero_counter].cache_line[i];
-    }
-
-    status = 1;
-  }
-
-  else status = 0;
-
-
-  //Then, copy the data from write_data to the cache line in the entry, 
-  //set the valid bit of the entry, clear the dirty bit of the 
-  //entry, and write the tag bits of the address into the tag of 
-  //the entry.
-
-  //CODE HERE
-  //copying data from write_data to the cache line
-  for (int j=0; j<16; j++) 
-  {
-    l2_cache[temp_index].lines[i].cache_line[j] = write_data[j];
-  }
-
-  //setting the valid bit and updating the counter bits (111)
-  l2_cache[temp_index].lines[i].v_d_c_tag = (l2_cache[temp_index].lines[i].v_d_c_tag | L2_VBIT_MASK);
-  l2_update_counter_bits(temp_index, i);
-
-  //clearing dirty bit
-  l2_cache[temp_index].lines[i].v_d_c_tag = (l2_cache[temp_index].lines[i].v_d_c_tag & 0xBFFFFFFF);
-
-  //writing the new tag to entry from given address
-  l2_cache[temp_index].lines[i].v_d_c_tag = (l2_cache[temp_index].lines[i].v_d_c_tag | temp_tag);
-
+  uint32_t temp_index = (address & L2_SET_INDEX_MASK) >> L2_SET_INDEX_SHIFT;
+  uint32_t temp_word_offset = (address & WORD_OFFSET_MASK) >> WORD_OFFSET_SHIFT;
+  uint32_t temp_byte_offset = (address & BYTE_OFFSET_MASK);
   
-  status = 0;
-  return;
+
+  for (int i = 0; i < 8; i++) 
+  {
+    if (((l2_cache[temp_index].lines[i].v_d_c_tag & L2_VBIT_MASK) == (1 << 31)) && ((l2_cache[temp_index].lines[i].v_d_c_tag & L2_ENTRY_TAG_MASK) == temp_tag)) 
+    {
+      printf("L2 Cache Hit has occured in reading\n");
+      l2_update_counter_bits(temp_index, i);
+      return 1;
+    }
+  }
+
+  printf("L2 Cache Miss has occured, Looking Through\n");
+  uint32_t look_result = l2_look_through_read(address);
+  return look_result;
 
 }

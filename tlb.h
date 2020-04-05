@@ -3,7 +3,7 @@ Size of a frame = 1k = 1^10
 Main memory is 64mb
 No of frames = 2^26/2^10 = 2^16
 Virtual address = 32 bits
-Single level paging : offset = 10 bits, page no = 22 bits
+Single level paging : offset = 10 bits, page no = 22 bits	
 Size of entry =16 + 24 = 40 bits
 But size of struct becomes 48 bits*/
 
@@ -17,8 +17,9 @@ But size of struct becomes 48 bits*/
 #define NUM_L1_TLB_ENTERIES 12
 
 typedef struct tlb_entry{
-	uint16_t frno;  //frame no: 16 bits
-	uint8_t pgno[3];  //22 bits pgno, 1 bit valid/invalid, 1 bit unused
+	uint32_t frno;//frame loc: 22 bits
+	uint8_t pgno;//8 bits pgno
+	uint8_t vi_bit;//1 : invalid, 0 : valid
 } tlb_entry;
 
 extern tlb_entry *l2_tlb;
@@ -29,26 +30,24 @@ extern uint8_t l2_curr_position;
 
 //Function to initialise tlb
 
-extern void l1_tlb_initialize();
-extern void l2_tlb_initialize();
+void l1_tlb_initialize();
+void l2_tlb_initialize();
 
 
 // Function to invalidate tlb
-extern void tlb_flush();
+void l1_tlb_flush();
+void l2_tlb_flush();
 
 //Boolean type function to check if the entry is found in L1 TLB
-extern int l1_found(uint16_t f_no, uint8_t pgno[3]);
+ int l1_found(uint16_t f_no, uint8_t pgno);
 
 // Function for new entry in tlb
-extern void l1_tlb_update(uint16_t f_no, uint8_t pgno[3]);
-extern void l1_tlb_valid_update(uint16_t old_frno,uint8_t old_pgno[3],uint16_t f_no,uint8_t pgno[3]);
-extern void l2_tlb_valid_update(uint16_t old_frno,uint8_t* old_pgno,uint16_t f_no,uint8_t* pgno);
-extern void l2_tlb_update(uint16_t f_no, uint8_t pgno[3]);
+ void l1_tlb_update(uint16_t f_no, uint8_t pgno);
+ void l1_tlb_valid_update(uint16_t old_frno,uint8_t old_pgno,uint16_t f_no,uint8_t pgno);
+ void l2_tlb_valid_update(uint16_t old_frno,uint8_t old_pgno,uint16_t f_no,uint8_t pgno);
+ void l2_tlb_update(uint16_t f_no, uint8_t pgno);
 
 // Function to search in tlb
-extern uint16_t l1_tlb_search(uint8_t pgno[3]);
-extern uint16_t l2_tlb_search(uint8_t *pgno);
+ uint32_t l1_tlb_search(uint8_t pgno);
+ uint32_t l2_tlb_search(uint8_t pgno);
 
-
-// Function to call main memory after l2 tlb miss
-extern void call_main_memory(uint8_t pgno[3]);
