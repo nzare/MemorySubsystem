@@ -186,22 +186,6 @@ int l1_cache_read(uint32_t address){ //returns status on completion either a hit
 //	}
 //}
 
-// int main(){
-// 	l1_initialize();
-// 	char* read;
-// 	int status = l1_cache_read(0X00000000, &read);
-// 	printf("%s\n", read);
-// 	//Create thread for buffer running async
-// 	pthread_t tid;
-// 	int ret = pthread_create(&tid,NULL,&thread_for_write_buffer,NULL);
-// 	if (ret == 0){
-// 		printf("Sucessfully Created Thread\n");
-// 	}
-// 	int write_result = l1_cache_write(0X00000000, "42");
-// 	pthread_join(tid, NULL);
-// 	return 1;
-// }
-
 
 
 
