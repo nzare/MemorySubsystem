@@ -235,6 +235,6 @@ int main(int argc, char *argv[])
   l2_tlb_initialize();
   get_input_va(filesList,num_input);
   fclose(out);
-  printf("Please Check 'g4_output.txt' for output log\n");
+  //printf("Please Check 'g4_output.txt' for output log\n");
   return 0;
 }
