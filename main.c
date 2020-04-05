@@ -63,11 +63,11 @@ void get_input_va(char* filesList[],int n){
   l1_tlb_initialize();
   l2_tlb_initialize();
 
-  l1_initialize(); //cache
+  l1_initialize(); //Initializing L1 cache
 
   init_square_mat_array();
 
-  //l2_initialize(); //cache
+  l2_initialize(); //Initializing L2 cache
 
   uint32_t frno;
   uint64_t* address;
