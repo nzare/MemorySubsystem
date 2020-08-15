@@ -1,10 +1,10 @@
 ﻿DSTN Assignment 1
 Group 4
 Group Members:
-* Himanshu Likhar : 2017A7PS0062G
-* Fenil Suchak : 2016B3A70541G
-* Nidhi Zare : 2017A7PS0139G
-* Abhinav Pathak : 2017A7PS0937G
+* Himanshu Likhar
+* Fenil Suchak
+* Nidhi Zare
+* Abhinav Pathak
 
 
 Question #7:
